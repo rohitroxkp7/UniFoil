@@ -21,7 +21,9 @@ In the main-directory, we have the following folders
 
 Each folder contains its own **ReadMe.md** file to aid better understanding of information and code.
 
-
+<p align="center">
+  <img src="Images/Flow_Regimes.png" width="800"/>
+</p>
 
 ## License
 
