@@ -11,6 +11,11 @@ UniFoil features include the following:
 
 The dataset can be found here - https://doi.org/10.7910/DVN/VQGWC4
 
+## License
+
+Distributed using the GNU Lesser General Public License (LGPL), verstion 2.1; see
+the LICENSE file for details.
+
 ## Citing UniFoil
 
 If you use UniFoil, please cite:
@@ -25,8 +30,3 @@ If you use UniFoil, please cite:
   publisher = {Harvard Dataverse},
   year = {2025}
 }
-
-## License
-
-Distributed using the GNU Lesser General Public License (LGPL), verstion 2.1; see
-the LICENSE file for details.
