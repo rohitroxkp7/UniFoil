@@ -1,7 +1,7 @@
 **UniFoil** is a Universal Dataset of Airfoils in Transitional and Turbulent Regimes for Subsonic and Transonic Flows for Machine Learning.
 It consists of 500,000 simulations covering transitional and fully turbulent flows across incompressible to compressible regimes for 2D airfoils.
 UniFoil features include the following:
-- 400,000 fully-turbulent airfoil simulations
+- 400,000 fully-turbulent (FT) airfoil simulations
 - 50,000 natural laminar flow (NLF) airfoil simulations in fully turbulent regime
 - 50,000 NLF airfoil simulations in the transition regime.
 
@@ -10,6 +10,16 @@ UniFoil features include the following:
 </p>
 
 The dataset can be found here - https://doi.org/10.7910/DVN/VQGWC4
+
+## Repository Contents
+This repository contains supplementary data and code for dat extraction and visualization purposes to help end-users better analysze the dataset.
+In the main-directory, we have the following folders
+- Airfoil_Generator_Code : This folder contains all the data for modal-based sampling of the airfoil shapes.
+- Data_Extract_and_Visualize : Useful code to aid data extraction, manipulation and visualization.
+- Machine Learning : Code for the neural network training that was successfully trained on the FT-airfoil dataset.
+- Images : Some results from the paper.
+
+Each folder contains its own **ReadMe.md** file to aid better understanding of information and code. 
 
 ## License
 
