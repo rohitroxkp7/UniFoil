@@ -21,10 +21,18 @@ To locally build the documentation, enter the `doc` folder and enter `make html`
 You can then view the built documentation in the `_build` folder.
 
 ## Citing ADflow
-If you use ADflow, please see [this page](https://mdolab-adflow.readthedocs-hosted.com/en/latest/citation.html) for citation information.
+If you use UniFoil, please cite:
+@misc{UniFoil,
+  doi = {10.7910/DVN/VQGWC4},
+  url = {https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/VQGWC4},
+  author = {Kanchi,  Rohit},
+  keywords = {Engineering,  Computer and Information Science,  Physics},
+  title = {UniFoil},
+  publisher = {Harvard Dataverse},
+  year = {2025}
+}
 
 ## License
-Copyright 2019 MDO Lab
 
 Distributed using the GNU Lesser General Public License (LGPL), verstion 2.1; see
 the LICENSE file for details.
