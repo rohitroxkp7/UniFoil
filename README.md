@@ -1,21 +1,16 @@
 # UniFoil
-# ADflow
-[![Build Status](https://dev.azure.com/mdolab/Public/_apis/build/status/mdolab.adflow?repoName=mdolab%2Fadflow&branchName=main)](https://dev.azure.com/mdolab/Public/_build/latest?definitionId=4&repoName=mdolab%2Fadflow&branchName=main)
-[![Documentation Status](https://readthedocs.com/projects/mdolab-adflow/badge/?version=latest)](https://mdolab-adflow.readthedocs-hosted.com/?badge=latest)
-[![codecov](https://codecov.io/gh/mdolab/adflow/branch/main/graph/badge.svg?token=DRCCCL12I8)](https://codecov.io/gh/mdolab/adflow)
 
-ADflow is a flow solver developed by the MDO Lab at the University of Michigan.
-It solves the compressible Euler, laminar Navier–Stokes and Reynolds-averaged Navier–Stokes equations using structured multi-block and overset meshes.
-ADflow's features include the following:
+UniFoil is a Universal Dataset of Airfoils in Transitional and Turbulent Regimes for Subsonic and Transonic Flows for Machine Learning.
+It consists of 500,000 simulations covering transitional and fully turbulent flows across incompressible to compressible regimes for 2D airfoils.
+UniFoil features include the following:
 
-- Discrete adjoint implementation
-- "Complexified" code for complex-step derivative verification
-- Massively parallel (both CPU and memory scalable) implementation using MPI
+- 400,000 fully-turbulent airfoil simulations
+- 50,000 natural laminar flow (NLF) airfoil simulations in fully turbulent regime
+- 50,000 NLF airfoil simulations in the transition regime.
 
-ADflow has been used in aerodynamic, aerostructural, and aeropropulsive design optimization of aircraft configurations.
-Furthermore, we used ADflow to perform design optimization of hydrofoils and wind turbines.
+The dataset can be found here - https://doi.org/10.7910/DVN/VQGWC4
 
-![](doc/images/adflow_applications.png)
+![](Images/Logo.png)
 
 ## Documentation
 Please see the [documentation](https://mdolab-adflow.readthedocs-hosted.com/en/latest/) for installation details and API documentation.
