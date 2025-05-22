@@ -19,7 +19,7 @@ In the main-directory, we have the following folders
 - Machine Learning : Contains code for the neural network training that was successfully trained on the FT-airfoil dataset.
 - Images : Some results from the paper.
 
-Each folder contains its own **ReadMe.md** file to aid better understanding of information and code.
+Each folder contains its own **README.md** file to aid better understanding of information and code.
 
 <p align="center">
   <img src="results/Flow_Regimes.png" width="800"/>
