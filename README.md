@@ -1,4 +1,7 @@
-<img src="Images/Logo.png" alt="Logo" width="200"/>
+<p align="center">
+  <img src="Images/Logo.png" width="200"/>
+</p>
+
 
 UniFoil is a Universal Dataset of Airfoils in Transitional and Turbulent Regimes for Subsonic and Transonic Flows for Machine Learning.
 It consists of 500,000 simulations covering transitional and fully turbulent flows across incompressible to compressible regimes for 2D airfoils.
