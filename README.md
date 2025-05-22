@@ -23,8 +23,7 @@ Each folder contains its own **ReadMe.md** file to aid better understanding of i
 
 ## License
 
-Distributed using the GNU Lesser General Public License (LGPL), verstion 2.1; see
-the LICENSE file for details.
+Distributed using the **CC BY-SA** license, version 4.0; see the LICENSE file for details.
 
 ## Citing UniFoil
 
