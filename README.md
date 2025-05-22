@@ -10,7 +10,7 @@ UniFoil features include the following:
 
 The dataset can be found here - https://doi.org/10.7910/DVN/VQGWC4
 
-![](Images/Logo.png)
+<img src="Images/Logo.png" alt="Logo" width="200"/>
 
 ## Documentation
 Please see the [documentation](https://mdolab-adflow.readthedocs-hosted.com/en/latest/) for installation details and API documentation.
