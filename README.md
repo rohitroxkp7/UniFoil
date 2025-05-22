@@ -12,12 +12,15 @@ UniFoil features include the following:
 The dataset can be found here - https://doi.org/10.7910/DVN/VQGWC4
 
 ## Citing UniFoil
+
 If you use UniFoil, please cite:
+
+```bibtex
 @misc{UniFoil,
   doi = {10.7910/DVN/VQGWC4},
   url = {https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/VQGWC4},
-  author = {Kanchi,  Rohit},
-  keywords = {Engineering,  Computer and Information Science,  Physics},
+  author = {Kanchi, Rohit},
+  keywords = {Engineering, Computer and Information Science, Physics},
   title = {UniFoil},
   publisher = {Harvard Dataverse},
   year = {2025}
