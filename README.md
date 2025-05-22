@@ -9,18 +9,9 @@ UniFoil features include the following:
   <img src="Images/Logo.png" width="200"/>
 </p>
 
-
-
 The dataset can be found here - https://doi.org/10.7910/DVN/VQGWC4
 
-
-## Documentation
-Please see the [documentation](https://mdolab-adflow.readthedocs-hosted.com/en/latest/) for installation details and API documentation.
-
-To locally build the documentation, enter the `doc` folder and enter `make html` in terminal.
-You can then view the built documentation in the `_build` folder.
-
-## Citing ADflow
+## Citing UniFoil
 If you use UniFoil, please cite:
 @misc{UniFoil,
   doi = {10.7910/DVN/VQGWC4},
