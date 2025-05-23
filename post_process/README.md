@@ -1,0 +1,2 @@
+cgns_visualize has some useful code to extract and plot the CGNS data from a single CGNS file.
+transition_supplementary_data_plot contains information on plotting the NTS factor from the TecPlot .dat file.

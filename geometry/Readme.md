@@ -1,9 +1,10 @@
-- NN.py is an example to contruct cl/cd surrogates using the training data
-- plotairfoil.py is an example to generate the airfoil coordinates using the mode coefficients
-- input/training.dat is about 40,000 sample airfoils
-- input/validating.dat is about 20,000 sample airfoils
-- Each row of training.dat and validating.dat is one sample, and the 67 columns are:
-  x(14 modes  mach AoA)  cl    cd     cm     dcl/dx     dcd/dx     dcm/dx
-- input/basis.txt is the airfoil modes
-- input/bounds.txt is the bounds of the 16 input variables (14 modes + Mach + AoA)
+NLF folder contains the code to generate the NLF airfoils.
+Just run the **genairfoil.py** code and airfoilsys.txt should get generated.
+It is a large file.
 
+Next, run the **dat_file_export.py** and the .dat files containing airfoil coordinates in x,y in the second and third columns should pop up in a locally created folder called airfoil_dat_files.
+
+Finally, use the **data_file_load_and_plot.py** code to load and plot the airfoil profiles for any airfoil of your choice.
+
+FT folder just run the **create_airfoil_coordinates.py** and the .dat files should come up in the airfoil_dat folder locally created.
+**plotairfoil.py** has the code for visualizing the airfoil.
