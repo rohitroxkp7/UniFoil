@@ -1,0 +1,20 @@
+# Unifoil Machine Learning Code
+Ben Melanson
+
+The Machine Learning code present here takes up a series of seperate files. Here is what they all do.
+
+1. Reshaper
+  - This script reshapes data from the .cgns files into a set of .csv files.
+2. ConvolutionalNetwork
+  - This script creates and trains the convolutional encoder and decoders that transform the pressure coefficent data into the latent space.
+3. Encoder
+  - This saves all of the pressure coefficent data as latent space data.
+4. Appender
+  - The appender adds the normalization data to the latent space data. This can by bypassed if you don't care about normaliztion.
+5. DNN
+  - This script creates and trains the Deep Neural Network that exists between the Airfoil Features and the Latent Space
+6. Decoder
+  - This script generates and compares the output of 
+7. doAll
+  - This script runs all 6 of the previous files back to back.
+  - It should override the configuration of each individual file
