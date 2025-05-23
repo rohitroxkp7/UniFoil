@@ -38,7 +38,7 @@ If you use UniFoil, please cite:
 @misc{UniFoil,
   doi = {10.7910/DVN/VQGWC4},
   url = {https://dataverse.harvard.edu/citation?persistentId=doi:10.7910/DVN/VQGWC4},
-  author = {Kanchi, Rohit},
+  author = {Kanchi, Rohit; Melanson, Benjamin; Somasekharan, Nithin; Pan, Shaowu; He, Sicheng},
   keywords = {Engineering, Computer and Information Science, Physics},
   title = {UniFoil},
   publisher = {Harvard Dataverse},
