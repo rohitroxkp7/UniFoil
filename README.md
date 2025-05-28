@@ -37,7 +37,7 @@ The following python packages are necessary for smooth working of the codes in t
 ### Install all using pip:
 
 ```html
-pip
+pip install tensorflow scikit-learn numpy matplotlib pyvista
 ```
 ## License
 
