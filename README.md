@@ -25,6 +25,23 @@ Each folder contains its own **README.md** file to aid better understanding of i
   <img src="results/Flow_Regimes.png" width="800"/>
 </p>
 
+## Python packages requirements
+The following python packages are necessary for smooth working of the codes in this repository:
+- Tensorflow
+- Scikit-learn
+- Numpy
+- Matplotlib
+- PyVista
+- Nvidia Cuda Drivers (Optional, for speed)
+
+### Install all using pip:
+
+```html
+<div style="position: relative;">
+  <pre><code id="pip-command">pip install tensorflow scikit-learn numpy matplotlib pyvista</code></pre>
+  <button onclick="navigator.clipboard.writeText(document.getElementById('pip-command').innerText)" style="position: absolute; top: 5px; right: 5px;">Copy</button>
+</div>
+```
 ## License
 
 Distributed using the **CC BY-SA** license, version 4.0; \
