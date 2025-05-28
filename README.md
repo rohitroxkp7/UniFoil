@@ -41,13 +41,6 @@ The following python packages are necessary for smooth working of the codes in t
   <pre><code id="pip-command">pip install tensorflow scikit-learn numpy matplotlib pyvista</code></pre>
   <button onclick="copyCommand()" style="position: absolute; top: 5px; right: 5px;">Copy</button>
 </div>
-
-<script>
-function copyCommand() {
-  const text = "pip install tensorflow scikit-learn numpy matplotlib pyvista";
-  navigator.clipboard.writeText(text);
-}
-</script>
 ```
 ## License
 
