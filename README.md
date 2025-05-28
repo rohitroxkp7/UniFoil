@@ -37,10 +37,7 @@ The following python packages are necessary for smooth working of the codes in t
 ### Install all using pip:
 
 ```html
-<div style="position: relative;">
-  <pre><code id="pip-command">pip install tensorflow scikit-learn numpy matplotlib pyvista</code></pre>
-  <button onclick="copyCommand()" style="position: absolute; top: 5px; right: 5px;">Copy</button>
-</div>
+pip
 ```
 ## License
 
