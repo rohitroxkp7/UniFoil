@@ -468,10 +468,276 @@ class ExtractData:
                         print(f"  {key}: {val}")
     
             return data
-    
+
         except Exception as e:
             print(f"[unifoil] ❌ Error reading {found_path}: {e}")
             return None
+
+    def _build_nlf_reverse_map(self):
+        """
+        Returns mapping from new_airfoil -> old_airfoil using matched_files.csv.
+        """
+        matched_csv_path = os.path.join(self.cwd, "matched_files.csv")
+        if not os.path.exists(matched_csv_path):
+            print(f"[unifoil] ⚠️ matched_files.csv not found at {matched_csv_path}")
+            return {}
+
+        df_match = pd.read_csv(matched_csv_path)
+
+        def extract_number(name):
+            match = re.search(r"airfoil_(\d+)_G2", name)
+            return int(match.group(1)) if match else None
+
+        df_match["old_airfoil"] = df_match["Matched_Grid_File"].apply(extract_number)
+        df_match["new_airfoil"] = df_match["Extracted_File"].apply(extract_number)
+        reverse_map = dict(zip(df_match["new_airfoil"], df_match["old_airfoil"]))
+        return reverse_map
+
+    def export_ft_modal_case_table(
+        self,
+        airfoil_range,
+        case_range,
+        output_csv="ft_modal_case_data.csv",
+        print_progress=True,
+    ):
+        """
+        Export modal coefficients + flow/aero data for FT (turbulent) airfoils.
+
+        Parameters
+        ----------
+        airfoil_range : tuple(int, int)
+            Inclusive (min_airfoil, max_airfoil) IDs to include.
+        case_range : tuple(int, int)
+            Inclusive (min_case, max_case) case IDs to include.
+        output_csv : str, optional
+            Output CSV file name (written in current working directory unless an
+            absolute path is provided).
+        print_progress : bool, optional
+            If True, logs the number of exported rows.
+
+        Returns
+        -------
+        str
+            Absolute path to the written CSV file.
+        """
+        if not os.path.exists(self.turb_csv):
+            raise FileNotFoundError(f"CSV file not found: {self.turb_csv}")
+
+        airfoil_min, airfoil_max = airfoil_range
+        case_min, case_max = case_range
+
+        train_path = os.path.join(self.cwd, "input_ft", "training.dat")
+        valid_path = os.path.join(self.cwd, "input_ft", "validating.dat")
+        basis_path = os.path.join(self.cwd, "input_ft", "basis.txt")
+        if not all(os.path.exists(p) for p in (train_path, valid_path, basis_path)):
+            raise FileNotFoundError(
+                "Missing one of input_ft/basis.txt, input_ft/training.dat, or input_ft/validating.dat in the current directory."
+            )
+
+        train_data = np.loadtxt(train_path)
+        valid_data = np.loadtxt(valid_path)
+        basis = np.loadtxt(basis_path)
+        num_ft_modes = max(basis.shape[0] - 1, 1)
+        n_train = train_data.shape[0]
+        n_valid = valid_data.shape[0]
+
+        def modal_coeffs_for_airfoil(airfoil_id):
+            if airfoil_id < 1 or airfoil_id > (n_train + n_valid):
+                raise ValueError(f"Airfoil ID {airfoil_id} outside available FT geometries.")
+            zero_idx = airfoil_id - 1
+            if zero_idx < n_train:
+                return train_data[zero_idx, :num_ft_modes]
+            zero_idx -= n_train
+            return valid_data[zero_idx, :num_ft_modes]
+
+        df_turb = pd.read_csv(self.turb_csv)
+        mask = (
+            (df_turb["airfoil"] >= airfoil_min)
+            & (df_turb["airfoil"] <= airfoil_max)
+            & (df_turb["case"] >= case_min)
+            & (df_turb["case"] <= case_max)
+        )
+        filtered = df_turb.loc[mask].copy()
+        if filtered.empty:
+            raise ValueError("No FT cases found for the specified airfoil/case ranges.")
+
+        records = []
+        for _, row in filtered.iterrows():
+            airfoil_id = int(row["airfoil"])
+            case_id = int(row["case"])
+            try:
+                coeffs = modal_coeffs_for_airfoil(airfoil_id)
+            except Exception as exc:
+                print(f"[unifoil] ⚠️ Skipping airfoil {airfoil_id}: {exc}")
+                continue
+
+            Cl, Cd = self.get_aero_coeffs_turb(airfoil_id, case_id, print_flag=False)
+            if Cl is None or Cd is None:
+                print(f"[unifoil] ⚠️ Skipping airfoil {airfoil_id}, case {case_id}: missing Cl/Cd file.")
+                continue
+
+            record = {
+                "airfoil": airfoil_id,
+                "case": case_id,
+                "Mach": row.get("Mach"),
+                "AoA": row.get("AoA"),
+                "Re": row.get("Re"),
+                "Cl": Cl,
+                "Cd": Cd,
+            }
+            for idx, value in enumerate(coeffs, start=1):
+                record[f"mode_{idx}"] = value
+            records.append(record)
+
+        if not records:
+            raise ValueError("No rows exported (all candidates skipped).")
+
+        export_df = pd.DataFrame(records)
+        mode_cols = [c for c in export_df.columns if c.startswith("mode_")]
+        ordered_cols = ["airfoil", "case", "Mach", "AoA", "Re", "Cl", "Cd"] + sorted(
+            mode_cols, key=lambda name: int(name.split("_")[1])
+        )
+        export_df = export_df[ordered_cols]
+
+        output_path = output_csv
+        if not os.path.isabs(output_path):
+            output_path = os.path.join(self.cwd, output_csv)
+        export_df.to_csv(output_path, index=False)
+
+        if print_progress:
+            print(f"[unifoil] ✅ Exported {len(export_df)} FT rows to {output_path}")
+
+        return output_path
+
+    def _export_nlf_modal_case_table_common(
+        self,
+        airfoil_range,
+        case_range,
+        output_csv,
+        clcd_fetcher,
+        dataset_label,
+        print_progress=True,
+    ):
+        if not os.path.exists(self.translam_csv):
+            raise FileNotFoundError(f"CSV file not found: {self.translam_csv}")
+
+        coefs_path = os.path.join(self.cwd, "input_nlf", "coefs.txt")
+        if not os.path.exists(coefs_path):
+            raise FileNotFoundError(f"Missing NLF coefficients file: {coefs_path}")
+
+        nlf_coefs = np.loadtxt(coefs_path)
+        total_airfoils = nlf_coefs.shape[0]
+        num_nlf_modes = nlf_coefs.shape[1]
+        reverse_map = self._build_nlf_reverse_map()
+
+        airfoil_min, airfoil_max = airfoil_range
+        case_min, case_max = case_range
+
+        df = pd.read_csv(self.translam_csv)
+        mask = (
+            (df["airfoil"] >= airfoil_min)
+            & (df["airfoil"] <= airfoil_max)
+            & (df["case"] >= case_min)
+            & (df["case"] <= case_max)
+        )
+        subset = df.loc[mask].copy()
+        if subset.empty:
+            raise ValueError(f"No {dataset_label} cases found for specified ranges.")
+
+        records = []
+        for _, row in subset.iterrows():
+            airfoil_id = int(row["airfoil"])
+            case_id = int(row["case"])
+            mapped_id = reverse_map.get(airfoil_id, airfoil_id)
+
+            if mapped_id < 1 or mapped_id > total_airfoils:
+                print(f"[unifoil] ⚠️ Skipping airfoil {airfoil_id}: mapped ID {mapped_id} invalid.")
+                continue
+
+            coeffs = nlf_coefs[mapped_id - 1, :num_nlf_modes]
+            Cl, Cd = clcd_fetcher(airfoil_id, case_id, print_flag=False)
+            if Cl is None or Cd is None:
+                print(f"[unifoil] ⚠️ Skipping airfoil {airfoil_id}, case {case_id}: missing Cl/Cd file.")
+                continue
+
+            record = {
+                "airfoil": airfoil_id,
+                "case": case_id,
+                "mapped_airfoil": mapped_id,
+                "Mach": row.get("Mach"),
+                "AoA": row.get("AoA"),
+                "Re": row.get("Re"),
+                "Cl": Cl,
+                "Cd": Cd,
+            }
+            for idx, value in enumerate(coeffs, start=1):
+                record[f"mode_{idx}"] = value
+            records.append(record)
+
+        if not records:
+            raise ValueError(f"No rows exported for {dataset_label} (all skipped).")
+
+        export_df = pd.DataFrame(records)
+        mode_cols = [c for c in export_df.columns if c.startswith("mode_")]
+        ordered_cols = [
+            "airfoil",
+            "case",
+            "mapped_airfoil",
+            "Mach",
+            "AoA",
+            "Re",
+            "Cl",
+            "Cd",
+        ] + sorted(mode_cols, key=lambda name: int(name.split("_")[1]))
+        export_df = export_df[ordered_cols]
+
+        output_path = output_csv
+        if not os.path.isabs(output_path):
+            output_path = os.path.join(self.cwd, output_csv)
+        export_df.to_csv(output_path, index=False)
+
+        if print_progress:
+            print(f"[unifoil] ✅ Exported {len(export_df)} {dataset_label} rows to {output_path}")
+
+        return output_path
+
+    def export_nlf_turb_modal_case_table(
+        self,
+        airfoil_range,
+        case_range,
+        output_csv="nlf_turb_modal_case_data.csv",
+        print_progress=True,
+    ):
+        """
+        Export modal coefficients + flow/aero data for NLF airfoils (fully turbulent sims).
+        """
+        return self._export_nlf_modal_case_table_common(
+            airfoil_range,
+            case_range,
+            output_csv,
+            clcd_fetcher=self.get_aero_coeffs_lam,
+            dataset_label="NLF turb",
+            print_progress=print_progress,
+        )
+
+    def export_nlf_transi_modal_case_table(
+        self,
+        airfoil_range,
+        case_range,
+        output_csv="nlf_transi_modal_case_data.csv",
+        print_progress=True,
+    ):
+        """
+        Export modal coefficients + flow/aero data for NLF airfoils (transition sims).
+        """
+        return self._export_nlf_modal_case_table_common(
+            airfoil_range,
+            case_range,
+            output_csv,
+            clcd_fetcher=self.get_aero_coeffs_transi,
+            dataset_label="NLF transi",
+            print_progress=print_progress,
+        )
 
     # NLF turb cases:
 
