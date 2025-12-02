@@ -1,10 +1,9 @@
 from unifoil.extract_data import ExtractData
 
 ed = ExtractData()
-Cl, Cd = ed.get_aero_coeffs(airfoil_number=5801, case_number=1)
-print("Returned values:", Cl, Cd)
+dat = ed.get_aero_coeffs_turb(airfoil_number=5801, case_number=1)
 
-data = ed.load_convergence_data(airfoil_number=3, case_number=1, print_flag=True)
+data = ed.load_convergence_data_turb(airfoil_number=3, case_number=1, print_flag=True)
 
 # Access specific convergence fields
 if data:

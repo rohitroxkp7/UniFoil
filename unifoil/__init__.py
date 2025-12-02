@@ -1,6 +1,8 @@
 import os
 import runpy
 
+from .getdata import GetData
+
 def gen_ft():
     """
     Generate airfoil_ft_geom folder in the current working directory.
@@ -19,3 +21,6 @@ def gen_nlf():
     script_path = os.path.join(os.path.dirname(__file__), "geometry", "nlf_geometry_gen.py")
     print(f"[unifoil] Running NLF geometry generator from: {script_path}")
     runpy.run_path(script_path, run_name="__main__")
+
+
+__all__ = ["gen_ft", "gen_nlf", "GetData"]

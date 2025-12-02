@@ -663,7 +663,6 @@ class ExtractData:
             record = {
                 "airfoil": airfoil_id,
                 "case": case_id,
-                "mapped_airfoil": mapped_id,
                 "Mach": row.get("Mach"),
                 "AoA": row.get("AoA"),
                 "Re": row.get("Re"),
@@ -682,7 +681,6 @@ class ExtractData:
         ordered_cols = [
             "airfoil",
             "case",
-            "mapped_airfoil",
             "Mach",
             "AoA",
             "Re",
