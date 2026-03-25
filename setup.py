@@ -16,5 +16,6 @@ setup(
         "pyvista",
         "niceplots",
         "mdolab-baseclasses",
+        "docker",
     ],
 )
