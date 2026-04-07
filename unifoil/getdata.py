@@ -9,6 +9,7 @@ from typing import Iterable, List, Optional
 import urllib.request
 import urllib.error
 from zipfile import ZipFile
+import pandas as pd
 
 
 @dataclass(frozen=True)
@@ -64,10 +65,9 @@ class GetData:
             description="NLF generator inputs (coefs/modes/xslice)",
         ),
         DownloadSpec(
-            url="https://dataverse.harvard.edu/api/access/datafile/13185747",
-            filename="matched_files.csv",
-            description="NLF matched geometry mapping (converted from .tab)",
-            convert_tsv_to_csv=True,
+            url="https://huggingface.co/datasets/rkanchi/UniFoil/resolve/main/sample_cutout_turb.zip?download=true",
+            filename="sample_cutout_turb.zip",
+            description="Sample turbulent surface cutout CGNS files",
         ),
     ]
     SAMPLE_FILES: List[DownloadSpec] = [
@@ -111,6 +111,10 @@ class GetData:
     def __init__(self, data_root: Optional[str] = None):
         self.data_root = Path(data_root) if data_root else Path(os.getcwd())
         self.data_root.mkdir(parents=True, exist_ok=True)
+        self._global_index_files = {
+            "Airfoil_Case_Data_Trans_Lam.csv",
+            "Airfoil_Case_Data_turb.csv",
+        }
 
     # ------------------------------------------------------------------ #
     # Public API
@@ -160,6 +164,8 @@ class GetData:
 
             if target.exists() and not overwrite:
                 print(f"[getdata] Skipping '{target.name}' (already exists).")
+                if target.name in self._global_index_files:
+                    self._ensure_global_index(target)
                 saved_paths.append(target)
                 continue
             if is_zip and extracted_dir and extracted_dir.exists() and not overwrite:
@@ -180,6 +186,9 @@ class GetData:
                 else:
                     self._move_into_place(downloaded_path, target)
                 print(f"[getdata] Saved '{final_path.name}'.")
+
+                if final_path.name in self._global_index_files:
+                    self._ensure_global_index(final_path)
 
                 if final_path.suffix.lower() == ".zip":
                     extracted_path = self._extract_zip(final_path)
@@ -269,3 +278,24 @@ class GetData:
                 shutil.move(str(item), destination)
             nested_dir.rmdir()
         return destination
+
+    @staticmethod
+    def _ensure_global_index(csv_path: Path) -> None:
+        """
+        Ensure a global_index column exists with 1..N in row order.
+        """
+        try:
+            df = pd.read_csv(csv_path)
+        except Exception as exc:  # pragma: no cover - IO/parsing errors
+            print(f"[getdata] ⚠️ Could not read {csv_path.name} to add global_index: {exc}")
+            return
+
+        if "global_index" in df.columns:
+            return
+
+        df["global_index"] = range(1, len(df) + 1)
+        try:
+            df.to_csv(csv_path, index=False)
+            print(f"[getdata] Added global_index to '{csv_path.name}'.")
+        except Exception as exc:  # pragma: no cover - IO errors
+            print(f"[getdata] ⚠️ Could not write {csv_path.name} with global_index: {exc}")
